@@ -49,7 +49,7 @@ ram.runtime = "50M"
     [resources.sources]
 
     [resources.sources.main]
-    url = "https://github.com/wger-project/wger/archive/refs/tags/2.3.tar.gz"
+    url = "https://github.com/wger-project/wger/archive/b7a92641264cabbdb8008f9b8c6141683a5d7490.tar.gz"
     sha256 = "836caff7defff953780e243bb7bfb5ddae2b7fbdc9a306d26a56b6549806e4a8"
 
     autoupdate.strategy = "latest_github_release"
