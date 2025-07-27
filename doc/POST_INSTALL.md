@@ -1,7 +1,9 @@
-This is a dummy disclaimer to display after the install
+Congrats for the installation of __APP__!
 
 The app url is <https://__DOMAIN____PATH__>
 
-The app install dir is `__INSTALL_DIR__`
+The default credentials are:
+- username: admin
+- password: adminadmin
 
-The app id is `__ID__`
+But you can (understand: MUST!) change them at your conveniance. 
