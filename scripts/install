@@ -66,7 +66,7 @@ pushd "$install_dir"/
     set -o allexport; source "$install_dir"/.env; set +o allexport
     ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/wger" bootstrap
     ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py collectstatic --noinput --verbosity 2
-    ynh_hide_warnings ynh_exlec_as_app "$install_dir/venv/bin/python" manage.py migrate --all
+    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py migrate --all
 
 
 	echo "from django.contrib.sites.models import Site; site = Site.objects.get(pk=1); site.domain = '$domain'; site.name = '$domain wger Workout Manager'; site.save()" | ynh_hide_warnings "$install_dir/venv/bin/python" "$install_dir/manage.py" shell
