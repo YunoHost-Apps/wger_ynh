@@ -50,7 +50,7 @@ ram.runtime = "50M"
 
     [resources.sources.main]
     url = "https://github.com/Thovi98/wger/archive/977ca1db452e12d1c1de61da7fe72158a28606bf.zip"
-    sha256 = "9c0e13b8c798df4a3c00e0fc819bb2fa1e2882755c8e33e6ba04520f8368e8a9"
+    sha256 = "3d6db5236bf59e63db35d0a590005ec30a8d919552af62a3ab84825163f594e5"
 
     autoupdate.strategy = "latest_github_release"
 
