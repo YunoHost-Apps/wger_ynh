@@ -56,8 +56,8 @@ pushd "$install_dir"/
     ynh_hide_warnings ynh_exec_as_app CYPRESS_INSTALL_BINARY=0 NODE_OPTIONS="--max-old-space-size=3000" npm install sass
 
     ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/wger" bootstrap
-    sed -i "s|^STATIC_ROOT = ''|STATIC_ROOT = os.environ.get('DJANGO_STATIC_ROOT', '/home/wger/static')|" /var/www/wger/settings.py
-    sed -i "s|^MEDIA_ROOT = ''|MEDIA_ROOT = os.environ.get('DJANGO_MEDIA_ROOT', '/home/wger/media')|" /var/www/wger/settings.py
+    sed -i "s|^STATIC_ROOT = ''|STATIC_ROOT = os.environ.get('DJANGO_STATIC_ROOT', '/home/wger/static')|" /var/www/wger/wger/settings.py
+    sed -i "s|^MEDIA_ROOT = ''|MEDIA_ROOT = os.environ.get('DJANGO_MEDIA_ROOT', '/home/wger/media')|" /var/www/wger/wger/settings.py
     ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py collectstatic --noinput --verbosity 2
     ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py migrate --all
 
