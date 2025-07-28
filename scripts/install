@@ -55,10 +55,11 @@ pushd "$install_dir"/
     ynh_hide_warnings ynh_exec_as_app corepack prepare yarn@4 --activate
     ynh_hide_warnings ynh_exec_as_app CYPRESS_INSTALL_BINARY=0 NODE_OPTIONS="--max-old-space-size=3000" npm install sass
 
-    DJANGO_SETTINGS_MODULE=extras.docker.production.settings
-    ynh_hide_warnings ynh_exec_as_app DJANGO_SETTINGS_MODULE=extras.docker.production.settings "$install_dir/venv/bin/wger" bootstrap
-    ynh_hide_warnings ynh_exec_as_app DJANGO_SETTINGS_MODULE=extras.docker.production.settings "$install_dir/venv/bin/python" manage.py collectstatic --noinput --verbosity 2
-    ynh_hide_warnings ynh_exec_as_app DJANGO_SETTINGS_MODULE=extras.docker.production.settings "$install_dir/venv/bin/python" manage.py migrate --all
+    sed -i "s|^STATIC_ROOT = ''|STATIC_ROOT = os.environ.get('DJANGO_STATIC_ROOT', '/home/wger/static')|" /var/www/wger/wger/settings.py
+    sed -i "s|^MEDIA_ROOT = ''|MEDIA_ROOT = os.environ.get('DJANGO_MEDIA_ROOT', '/home/wger/media')|" /var/www/wger/wger/settings.py
+    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/wger" bootstrap
+    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py collectstatic --noinput --verbosity 2
+    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py migrate --all
 
 
 	echo "from django.contrib.sites.models import Site; site = Site.objects.get(pk=1); site.domain = '$domain'; site.name = '$domain wger Workout Manager'; site.save()" | ynh_hide_warnings "$install_dir/venv/bin/python" "$install_dir/manage.py" shell
