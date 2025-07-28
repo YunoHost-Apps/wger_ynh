@@ -49,8 +49,8 @@ ram.runtime = "50M"
     [resources.sources]
 
     [resources.sources.main]
-    url = "https://github.com/Thovi98/wger/archive/refs/heads/master.zip"
-    sha256 = "eff8aa55b95bc9b13ba24e043abdeff56c9ec28c4b29b66758e9efb0b4d6da06"
+    url = "https://github.com/wger-project/wger/archive/b7a92641264cabbdb8008f9b8c6141683a5d7490.tar.gz"
+    sha256 = "d9c611ab96efb18b52f5d99a269d1e04f867a734dd2cf6dcc7f4d812a2f529cb"
 
     autoupdate.strategy = "latest_github_release"
 
@@ -69,9 +69,6 @@ ram.runtime = "50M"
 
     [resources.apt]
     packages = [ "postgresql, postgresql-contrib, python3, python3-venv, ffmpeg, redis-server" ]
-    extras.yarn.repo = "deb https://dl.yarnpkg.com/debian/ stable main"
-    extras.yarn.key = "https://dl.yarnpkg.com/debian/pubkey.gpg"
-    extras.yarn.packages = "yarn"
-
+    
     [resources.database]
     type = "postgresql"
