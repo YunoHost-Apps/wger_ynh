@@ -55,9 +55,9 @@ pushd "$install_dir"/
     ynh_hide_warnings ynh_exec_as_app corepack prepare yarn@4 --activate
     ynh_hide_warnings ynh_exec_as_app CYPRESS_INSTALL_BINARY=0 NODE_OPTIONS="--max-old-space-size=3000" npm install sass
 
-    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/wger" create-settings --settings-path $install_dir/settings.py
-    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/wger" bootstrap --settings-path $install_dir/settings.py
-    ynh_replace --match="STATIC_ROOT = ''" --replace="STATIC_ROOT = $install_dir/static" --file="$install_dir/settings.py"
+    mv $install_dir/extras/docker/production/settings.py $install_dir/
+    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/wger" create-settings --settings-path
+    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/wger" bootstrap
     ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py collectstatic --noinput --verbosity 2
     ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py migrate --all
 
