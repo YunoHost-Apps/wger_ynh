@@ -23,8 +23,6 @@ redis_db=$(ynh_redis_get_free_db)
 ynh_app_setting_set --key=key --value=$key
 ynh_app_setting_set --key=redis_db --value=$redis_db
 
-ynh_app_setting_set --key=do_not_backup_data --value=1
-
 #=================================================
 # INSTALL DEPENDENCIES
 #=================================================
@@ -75,12 +73,6 @@ pushd "$install_dir"/
     ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/wger" bootstrap --settings-path "$install_dir"/settings.py
     ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py collectstatic --noinput --verbosity 2
     ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py migrate
-
-    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py sync-ingredients-async
-    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py sync-exercises
-    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py download-exercise-images
-    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py download-exercise-videos
-    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py exercises-health-check
 
     echo "from django.contrib.sites.models import Site; site = Site.objects.get(pk=1); site.domain = '$domain'; site.name = '$domain wger Workout Manager'; site.save()" | ynh_hide_warnings "$install_dir/venv/bin/python" "$install_dir/manage.py" shell
 	echo "yes"
