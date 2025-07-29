@@ -35,13 +35,14 @@ if os.environ.get('DJANGO_ADMINS'):
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env.str("__DB_NAME__"),
-        'USER': env.str("__DB_USER__"),
-        'PASSWORD': env.str("__DB_PWD__"),
+        'NAME': '__DB_NAME__',
+        'USER': '__DB_USER__',
+        'PASSWORD': '__DB_PWD__',
         'HOST': 'localhost',
         'PORT': 5432,
     }
 }
+
 # Timezone for this installation. Consult settings_global.py for more information
 TIME_ZONE = env.str("TIME_ZONE", 'Europe/Berlin')
 
