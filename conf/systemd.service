@@ -1,6 +1,5 @@
 [Unit]
-Description=LibreTranslate
-Documentation=https://github.com/uav4geo/LibreTranslate
+Description=wger service
 After=network.target
 
 [Service]
@@ -8,7 +7,6 @@ Type=simple
 User=__APP__
 Group=__APP__
 WorkingDirectory=__INSTALL_DIR__/
-EnvironmentFile=__INSTALL_DIR__/.env
 ExecStart=__INSTALL_DIR__/venv/bin/gunicorn --access-logfile - --workers 3 wger.wsgi:application -b :__PORT__
 
 StandardOutput=append:/var/log/__APP__/__APP__.log
