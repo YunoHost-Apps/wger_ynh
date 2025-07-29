@@ -30,7 +30,7 @@ ldap = true
 
 sso = true
 
-disk = "12G"
+disk = "550M"
 ram.build = "1G"
 ram.runtime = "500M"
 
