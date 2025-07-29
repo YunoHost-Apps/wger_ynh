@@ -32,6 +32,8 @@ ynh_script_progression "Setting up source files..."
 
 ynh_setup_source --dest_dir="$install_dir"
 
+chown -R "$app:www-data" "$install_dir"
+
 #=================================================
 # APP INITIAL CONFIGURATION
 #=================================================
@@ -73,6 +75,8 @@ pushd "$install_dir"/
  
     ynh_safe_rm "$install_dir/.cache/pip"
 popd
+
+chown -R "$app:www-data" "$install_dir"
 
 ynh_config_add_logrotate
 touch /var/log/$app/$app.log
