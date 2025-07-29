@@ -54,7 +54,7 @@ chown -R "$app:$app" "$install_dir/static"
 pushd "$install_dir"/
     ynh_script_progression "Creating venv..."
     ynh_exec_as_app python3 -m venv "$install_dir/venv"
-    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/pip" install --upgrade pip
+    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/pip" install --upgrade pip gunicorn
     ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/pip" install .
 
     ynh_script_progression "Configuring $app..."
