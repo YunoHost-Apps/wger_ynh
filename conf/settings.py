@@ -72,7 +72,7 @@ LOGIN_REDIRECT_URL = env.str('LOGIN_REDIRECT_URL', '/')
 # Allow all hosts to access the application. Change if used in production.
 ALLOWED_HOSTS = ['__DOMAIN__']
 
-SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
 
 # Configure a real backend in production
 if DEBUG:
