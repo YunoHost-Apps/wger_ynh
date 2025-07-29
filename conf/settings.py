@@ -80,9 +80,9 @@ if DEBUG:
 if env.bool("ENABLE_EMAIL", True):
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = '__DOMAIN__'
-    EMAIL_PORT = 587,
-    EMAIL_HOST_USER = '__APP__',
-    EMAIL_HOST_PASSWORD = '__MAIL_PWD__',
+    EMAIL_PORT = 587
+    EMAIL_HOST_USER = '__APP__'
+    EMAIL_HOST_PASSWORD = '__MAIL_PWD__'
     EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", True)
     EMAIL_USE_SSL = env.bool("EMAIL_USE_SSL", False)
     EMAIL_TIMEOUT = 60
