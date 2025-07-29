@@ -32,24 +32,16 @@ if os.environ.get('DJANGO_ADMINS'):
     ADMINS = [env.tuple('DJANGO_ADMINS'), ]
     MANAGERS = ADMINS
 
-if os.environ.get("DJANGO_DB_ENGINE"):
-    DATABASES = {
-        'default': {
-            'ENGINE': env.str("django.db.backends.postgresql"),
-            'NAME': env.str("__DB_NAME__"),
-            'USER': env.str("__DB_USER__"),
-            'PASSWORD': env.str("__DB_PWD__"),
-            'HOST': env.str("localhost"),
-            'PORT': env.int("5432"),
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': env.str("django.db.backends.postgresql"),
+        'NAME': env.str("__DB_NAME__"),
+        'USER': env.str("__DB_USER__"),
+        'PASSWORD': env.str("__DB_PWD__"),
+        'HOST': env.str("localhost"),
+        'PORT': env.int("5432"),
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': env.str('DJANGO_DB_DATABASE', '/home/wger/db/database.sqlite'),
-        }
-    }
+}
 
 # Timezone for this installation. Consult settings_global.py for more information
 TIME_ZONE = env.str("TIME_ZONE", 'Europe/Berlin')
