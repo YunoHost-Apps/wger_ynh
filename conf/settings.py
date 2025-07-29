@@ -77,7 +77,7 @@ SESSION_ENGINE = "django.contrib.sessions.backends.db"
 # Configure a real backend in production
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-if env.bool("ENABLE_EMAIL", False):
+if env.bool("ENABLE_EMAIL", True):
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = env.str("__DOMAIN__")
     EMAIL_PORT = env.int("587")
