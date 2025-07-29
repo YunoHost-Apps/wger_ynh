@@ -65,6 +65,13 @@ pushd "$install_dir"/
     ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py collectstatic --noinput --verbosity 2
     ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py migrate
 
+    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py sync-ingredients-async
+    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py sync-exercises
+    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py download-exercise-images
+    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py download-exercise-videos
+    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py exercises-health-check
+
+
 	echo "from django.contrib.sites.models import Site; site = Site.objects.get(pk=1); site.domain = '$domain'; site.name = '$domain wger Workout Manager'; site.save()" | ynh_hide_warnings "$install_dir/venv/bin/python" "$install_dir/manage.py" shell
 	echo "yes"
  
