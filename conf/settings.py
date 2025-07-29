@@ -55,7 +55,7 @@ else:
 TIME_ZONE = env.str("TIME_ZONE", 'Europe/Berlin')
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = env.str("__KEY__")
+SECRET_KEY = env.str("SECRET_KEY", '__KEY__')
 
 # Your reCaptcha keys
 RECAPTCHA_PUBLIC_KEY = env.str('RECAPTCHA_PUBLIC_KEY', '')
@@ -64,12 +64,12 @@ RECAPTCHA_PRIVATE_KEY = env.str('RECAPTCHA_PRIVATE_KEY', '')
 # The site's URL (e.g. http://www.my-local-gym.com or http://localhost:8000)
 # This is needed for uploaded files and images (exercise images, etc.) to be
 # properly served.
-SITE_URL = env.str('https://__DOMAIN__')
+SITE_URL = env.str('SITE_URL', 'https://__DOMAIN__')
 
 # Path to uploaded files
 # Absolute filesystem path to the directory that will hold user-uploaded files.
-MEDIA_ROOT = env.str("__DATA_DIR__/media")
-STATIC_ROOT = env.str("__INSTALL_DIR__/static")
+MEDIA_ROOT = env.str("DJANGO_MEDIA_ROOT", '__DATA_DIR__/media')
+STATIC_ROOT = env.str("DJANGO_STATIC_ROOT", '__INSTALL_DIR__/static')
 
 # If you change these, adjust nginx alias definitions as well
 MEDIA_URL = env.str('MEDIA_URL', '/media/')
@@ -78,14 +78,14 @@ STATIC_URL = env.str('STATIC_URL', '/static/')
 LOGIN_REDIRECT_URL = env.str('LOGIN_REDIRECT_URL', '/')
 
 # Allow all hosts to access the application. Change if used in production.
-ALLOWED_HOSTS = ['__DOMAIN__']
+ALLOWED_HOSTS = ['__DOMAIN__', ]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
 # Configure a real backend in production
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-if env.bool("ENABLE_EMAIL", True):
+if env.bool("ENABLE_EMAIL", False):
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = env.str("__DOMAIN__")
     EMAIL_PORT = env.int("587")
@@ -239,3 +239,9 @@ LOGGING = {
         },
     }
 }
+
+# Yunohost hack so users can define a new conf, and we can just replace the conf
+try:
+    from .local_settings import *
+except ImportError:
+    pass
