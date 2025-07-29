@@ -8,7 +8,7 @@
 source ../settings/scripts/_common.sh
 source /usr/share/yunohost/helpers
 
-ynh_app_setting_set --key=backup_core_only
+ynh_app_setting_set --key=backup_core_only --value=1
 
 #=================================================
 # RESTORE THE APP MAIN DIR
