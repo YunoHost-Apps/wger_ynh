@@ -181,7 +181,7 @@ SIMPLE_JWT['SIGNING_KEY'] = env.str("SIGNING_KEY", SECRET_KEY)
 #
 CSRF_TRUSTED_ORIGINS = env.list(
     "CSRF_TRUSTED_ORIGINS",
-    default=['__DOMAIN__', ],
+    default=['https://__DOMAIN__'],
 )
 
 if env.bool('X_FORWARDED_PROTO_HEADER_SET', False):
