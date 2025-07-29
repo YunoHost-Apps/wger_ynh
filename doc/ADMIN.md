@@ -1,3 +1,5 @@
-This is a dummy admin doc for this app
+The default credentials are:
+- username: admin
+- password: adminadmin
 
-The app install dir is `__INSTALL_DIR__`
+But you can (understand: MUST!) change them at your conveniance. 

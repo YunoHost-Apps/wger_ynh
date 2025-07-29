@@ -1,5 +1,5 @@
 [Unit]
-Description=Small description of the service
+Description=wger service
 After=network.target
 
 [Service]
@@ -7,12 +7,13 @@ Type=simple
 User=__APP__
 Group=__APP__
 WorkingDirectory=__INSTALL_DIR__/
-ExecStart=__INSTALL_DIR__/script
+ExecStart=__INSTALL_DIR__/venv/bin/gunicorn --access-logfile - --workers 3 wger.wsgi:application -b 127.0.0.1:__PORT__
+
 StandardOutput=append:/var/log/__APP__/__APP__.log
 StandardError=inherit
+SyslogIdentifier=__APP__
+Restart=always
 
-### Depending on specificities of your service/app, you may need to tweak these
-### .. but this should be a good baseline
 # Sandboxing options to harden security
 # Details for these options: https://www.freedesktop.org/software/systemd/man/systemd.exec.html
 NoNewPrivileges=yes
