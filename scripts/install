@@ -48,6 +48,9 @@ ynh_script_progression "Installing Python dependencies..."
 mkdir -p "$data_dir/media"
 mkdir -p "$install_dir/static"
 
+chown -R "$app:$app" "$data_dir/media"
+chown -R "$app:$app" "$install_dir/static"
+
 pushd "$install_dir"/
     ynh_script_progression "Creating venv..."
     ynh_exec_as_app python3 -m venv "$install_dir/venv"
