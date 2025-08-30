@@ -6,7 +6,7 @@ id = "wger"
 name = "wger"
 description.en = "Fitness, workout, nutrition and weight tracker"
 
-version = "2.3~ynh1"
+version = "2.3~ynh2"
 
 maintainers = ["Thovi98"]
 
