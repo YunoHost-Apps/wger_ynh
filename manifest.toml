@@ -21,7 +21,7 @@ cpe = "cpe:2.3:a:wger:workout_manager"
 fund = "https://buymeacoffee.com/wger"
 
 [integration]
-yunohost = ">= 12.1.15"
+yunohost = ">= 12.1.38"
 helpers_version = "2.1"
 architectures = "all"
 multi_instance = true
