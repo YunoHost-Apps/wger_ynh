@@ -49,6 +49,20 @@ chown -R "$app:$app" "$data_dir/media"
 chown -R "$app:$app" "$install_dir/static"
 
 pushd "$install_dir"/
+    export PYTHONPATH=$install_dir
+    
+    export MEDIA_ROOT=$data_dir/media
+    export STATIC_ROOT=$install_dir/static
+    
+    export DJANGO_DB_ENGINE=django.db.backends.postgresql
+    export DJANGO_DB_DATABASE=$db_name
+    export DJANGO_DB_USER=$db_user
+    export DJANGO_DB_PASSWORD=$db_pwd
+    export DJANGO_DB_HOST=localhost
+    export DJANGO_DB_PORT=5432
+
+    export ALLOWED_HOSTS=$domain
+
     ynh_script_progression "Creating venv..."
     ynh_exec_as_app python3 -m venv "$install_dir/venv"
     ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/pip" install --upgrade pip gunicorn
