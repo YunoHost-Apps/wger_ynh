@@ -4,7 +4,6 @@
 # IMPORT GENERIC HELPERS
 #=================================================
 
-source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -73,8 +72,8 @@ pushd "$install_dir"/
     ynh_hide_warnings ynh_exec_as_app corepack prepare yarn@4 --activate
     ynh_hide_warnings ynh_exec_as_app CYPRESS_INSTALL_BINARY=0 NODE_OPTIONS="--max-old-space-size=3000" npm install sass
 
-    ynh_hide_warnings ynh_exec_as_app PYTHONPATH=$install_dir MEDIA_ROOT=$data_dir/media STATIC_ROOT=$install_dir/static DJANGO_DB_ENGINE=django.db.backends.postgresql DJANGO_DB_DATABASE=$db_name DJANGO_DB_USER=$db_user DJANGO_DB_PASSWORD=$db_pwd DJANGO_DB_HOST=localhost DJANGO_DB_PORT=5432 "$install_dir/venv/bin/wger" bootstrap
-    ynh_hide_warnings ynh_exec_as_app PYTHONPATH=$install_dir MEDIA_ROOT=$data_dir/media STATIC_ROOT=$install_dir/static "$install_dir/venv/bin/python" manage.py collectstatic --noinput --verbosity 2
+    ynh_hide_warnings ynh_exec_as_app env $(cat $install_dir/.env | xargs) "$install_dir/venv/bin/wger" bootstrap
+    ynh_hide_warnings ynh_exec_as_app env $(cat $install_dir/.env | xargs) "$install_dir/venv/bin/python" manage.py collectstatic --noinput --verbosity 2
     ynh_hide_warnings ynh_exec_as_app PYTHONPATH=$install_dir MEDIA_ROOT=$data_dir/media STATIC_ROOT=$install_dir/static "$install_dir/venv/bin/python" manage.py migrate
 
     echo "from django.contrib.sites.models import Site; site = Site.objects.get(pk=1); site.domain = '$domain'; site.name = '$domain wger Workout Manager'; site.save()" | ynh_hide_warnings "$install_dir/venv/bin/python" "$install_dir/manage.py" shell
