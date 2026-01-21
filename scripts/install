@@ -11,10 +11,12 @@ source /usr/share/yunohost/helpers
 # INITIALIZE AND STORE SETTINGS
 #=================================================
 
-key=$(ynh_string_random --length=45 | base64)
+secret_key=$(ynh_string_random --length=45 | base64)
+signing_key=$(ynh_string_random --length=45 | base64)
 redis_db=$(ynh_redis_get_free_db)
 
-ynh_app_setting_set --key=key --value=$key
+ynh_app_setting_set --key=secret_key --value=$secret_key
+ynh_app_setting_set --key=signing_key --value=$signing_key
 ynh_app_setting_set --key=redis_db --value=$redis_db
 
 #=================================================
@@ -31,7 +33,7 @@ chown -R "$app:www-data" "$install_dir"
 #=================================================
 ynh_script_progression "Adding $app's configuration files..."
 
-ynh_config_add --template="settings.py" --destination="$install_dir/settings.py"
+ynh_config_add --template=".env" --destination="$install_dir/.env"
 chown -R "$app":www-data "$install_dir"/
 
 #=================================================
@@ -57,7 +59,7 @@ pushd "$install_dir"/
     ynh_hide_warnings ynh_exec_as_app corepack prepare yarn@4 --activate
     ynh_hide_warnings ynh_exec_as_app CYPRESS_INSTALL_BINARY=0 NODE_OPTIONS="--max-old-space-size=3000" npm install sass
 
-    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/wger" bootstrap --settings-path "$install_dir"/settings.py
+    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/wger" bootstrap
     ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py collectstatic --noinput --verbosity 2
     ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py migrate
 

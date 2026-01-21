@@ -43,8 +43,6 @@ ram.runtime = "500M"
     default = "visitors"
 
 [resources]
-    # See the packaging documentation for the full set
-    # of explanation regarding the behavior and properties for each of those
 
     [resources.sources]
 
