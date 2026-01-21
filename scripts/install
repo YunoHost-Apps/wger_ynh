@@ -49,7 +49,7 @@ chown -R "$app:$app" "$install_dir/static"
 
 pushd "$install_dir"/
     export PYTHONPATH=$install_dir
-    
+
     export MEDIA_ROOT=$data_dir/media
     export STATIC_ROOT=$install_dir/static
     
@@ -73,7 +73,7 @@ pushd "$install_dir"/
     ynh_hide_warnings ynh_exec_as_app corepack prepare yarn@4 --activate
     ynh_hide_warnings ynh_exec_as_app CYPRESS_INSTALL_BINARY=0 NODE_OPTIONS="--max-old-space-size=3000" npm install sass
 
-    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/wger" bootstrap
+    ynh_hide_warnings ynh_exec_as_app DJANGO_DB_ENGINE=django.db.backends.postgresql DJANGO_DB_DATABASE=$db_name DJANGO_DB_USER=$db_user DJANGO_DB_PASSWORD=$db_pwd "$install_dir/venv/bin/wger" bootstrap
     ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py collectstatic --noinput --verbosity 2
     ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/python" manage.py migrate
 
