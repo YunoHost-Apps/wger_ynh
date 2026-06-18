@@ -6,7 +6,7 @@ id = "wger"
 name = "wger"
 description.en = "Fitness, workout, nutrition and weight tracker"
 
-version = "2.4~ynh1"
+version = "2.6~ynh1"
 
 maintainers = ["Thovi98"]
 
@@ -47,8 +47,8 @@ ram.runtime = "500M"
     [resources.sources]
 
     [resources.sources.main]
-    url = "https://github.com/wger-project/wger/archive/refs/tags/2.4.tar.gz"
-    sha256 = "ccc91d1a948e29d985b0d0a72160ead2d6b10e1bc0ddf52e19dba7223d98c1ec"
+    url = "https://github.com/wger-project/wger/archive/refs/tags/2.6.tar.gz"
+    sha256 = "44b8193662fb730f3299997af8d5ed82d18dd72e1388a83f8996dfd2632c424a"
 
     autoupdate.strategy = "latest_github_release"
 
