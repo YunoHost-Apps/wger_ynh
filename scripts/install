@@ -13,7 +13,7 @@ source /usr/share/yunohost/helpers
 secret_key=$(ynh_string_random --length=45 | base64)
 signing_key=$(ynh_string_random --length=45 | base64)
 redis_db=$(ynh_redis_get_free_db)
-python_version=3.11
+python_version=3.12
 
 ynh_app_setting_set --key=secret_key --value=$secret_key
 ynh_app_setting_set --key=signing_key --value=$signing_key
