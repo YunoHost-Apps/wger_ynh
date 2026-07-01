@@ -13,6 +13,7 @@ source /usr/share/yunohost/helpers
 secret_key=$(ynh_string_random --length=45 | base64)
 signing_key=$(ynh_string_random --length=45 | base64)
 redis_db=$(ynh_redis_get_free_db)
+python_version=3.11
 
 ynh_app_setting_set --key=secret_key --value=$secret_key
 ynh_app_setting_set --key=signing_key --value=$signing_key
@@ -24,7 +25,8 @@ ynh_app_setting_set --key=redis_db --value=$redis_db
 ynh_script_progression "Setting up source files..."
 
 ynh_setup_source --dest_dir="$install_dir"
-
+ynh_setup_source --dest_dir="$install_dir/.uv" --source_id="uv"
+chmod +x "$install_dir/.uv/uv"
 chown -R "$app:www-data" "$install_dir"
 
 #=================================================
@@ -47,10 +49,9 @@ chown -R "$app:$app" "$data_dir/media"
 chown -R "$app:$app" "$install_dir/static"
 
 pushd "$install_dir"/
-    ynh_script_progression "Creating venv..."
-    ynh_exec_as_app python3 -m venv "$install_dir/venv"
-    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/pip" install --upgrade pip gunicorn
-    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/pip" install .
+
+# install with uv
+    ynh_exec_as_app uv --directory "$install_dir" sync --frozen
 
     ynh_script_progression "Configuring $app..."
     ynh_hide_warnings corepack enable
