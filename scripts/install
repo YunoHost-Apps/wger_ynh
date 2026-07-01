@@ -48,11 +48,10 @@ mkdir -p "$install_dir/static"
 chown -R "$app:$app" "$data_dir/media"
 chown -R "$app:$app" "$install_dir/static"
 
-pushd "$install_dir"/
-
 # install with uv
-    ynh_exec_as_app uv --directory "$install_dir" sync --frozen
+    ynh_hide_warnings uv sync --frozen --no-group dev --group docker --python $python_version --project "$install_dir" 
 
+pushd "$install_dir"/
     ynh_script_progression "Configuring $app..."
     ynh_hide_warnings corepack enable
     ynh_hide_warnings npm install -g corepack@latest
