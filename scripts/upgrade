@@ -26,7 +26,8 @@ ynh_app_setting_delete --key=key
 ynh_script_progression "Upgrading source files..."
 
 ynh_setup_source --dest_dir="$install_dir" --full_replace
-
+ynh_setup_source --dest_dir="$install_dir/.uv" --source_id="uv"
+chmod +x "$install_dir/.uv/uv"
 chown -R "$app:www-data" "$install_dir"
 
 #=================================================
