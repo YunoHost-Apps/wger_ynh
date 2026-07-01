@@ -42,6 +42,11 @@ chown -R "$app":www-data "$install_dir"/
 #=================================================
 ynh_script_progression "Upgrading Python dependencies..."
 
+
+export PATH="$install_dir/.uv:$PATH"
+export UV_PYTHON_INSTALL_DIR="$install_dir/.python_runtime"
+export UV_CACHE_DIR="$install_dir/.uv_cache"
+
 mkdir -p "$data_dir/media"
 mkdir -p "$install_dir/static"
 
