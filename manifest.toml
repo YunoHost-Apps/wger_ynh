@@ -80,6 +80,7 @@ ram.runtime = "500M"
 
     [resources.ports]
     main.default = 8000
+    ps.default = 8080
 
     [resources.apt]
     packages = "postgresql, postgresql-contrib, python3, python3-venv, ffmpeg, redis-server"
