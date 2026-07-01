@@ -5,7 +5,7 @@
 #=================================================
 
 source /usr/share/yunohost/helpers
-python_version=3.11
+python_version=3.12
 
 #=================================================
 # STOP SYSTEMD SERVICE
