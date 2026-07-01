@@ -48,6 +48,16 @@ mkdir -p "$install_dir/static"
 chown -R "$app:$app" "$data_dir/media"
 chown -R "$app:$app" "$install_dir/static"
 
+
+ynh_script_progression "Preparing UV..."
+    export PATH="$install_dir/.uv:$PATH"
+    export UV_PYTHON_INSTALL_DIR="$install_dir/.python_runtime"
+    export UV_CACHE_DIR="$install_dir/.uv_cache"
+    echo "PATH=$install_dir/.uv:\$PATH" >> $install_dir/.bashrc 
+    echo "UV_PYTHON_INSTALL_DIR=$install_dir/.python_runtime" >> $install_dir/.bashrc 
+    echo "UV_CACHE_DIR=$install_dir/.uv_cache" >> $install_dir/.bashrc
+    echo 'export PATH=$path_with_nodejs' >> $install_dir/.bashrc
+
 # install with uv
     ynh_hide_warnings uv sync --frozen --no-group dev --group docker --python $python_version --project "$install_dir" 
 
