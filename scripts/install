@@ -13,6 +13,7 @@ source /usr/share/yunohost/helpers
 secret_key=$(ynh_string_random --length=45 | base64)
 signing_key=$(ynh_string_random --length=45 | base64)
 redis_db=$(ynh_redis_get_free_db)
+python_version=3.12
 
 ynh_app_setting_set --key=secret_key --value=$secret_key
 ynh_app_setting_set --key=signing_key --value=$signing_key
@@ -24,7 +25,8 @@ ynh_app_setting_set --key=redis_db --value=$redis_db
 ynh_script_progression "Setting up source files..."
 
 ynh_setup_source --dest_dir="$install_dir"
-
+ynh_setup_source --dest_dir="$install_dir/.uv" --source_id="uv"
+chmod +x "$install_dir/.uv/uv"
 chown -R "$app:www-data" "$install_dir"
 
 #=================================================
@@ -46,12 +48,20 @@ mkdir -p "$install_dir/static"
 chown -R "$app:$app" "$data_dir/media"
 chown -R "$app:$app" "$install_dir/static"
 
-pushd "$install_dir"/
-    ynh_script_progression "Creating venv..."
-    ynh_exec_as_app python3 -m venv "$install_dir/venv"
-    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/pip" install --upgrade pip gunicorn
-    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/pip" install .
 
+ynh_script_progression "Preparing UV..."
+    export PATH="$install_dir/.uv:$PATH"
+    export UV_PYTHON_INSTALL_DIR="$install_dir/.python_runtime"
+    export UV_CACHE_DIR="$install_dir/.uv_cache"
+    echo "PATH=$install_dir/.uv:\$PATH" >> $install_dir/.bashrc 
+    echo "UV_PYTHON_INSTALL_DIR=$install_dir/.python_runtime" >> $install_dir/.bashrc 
+    echo "UV_CACHE_DIR=$install_dir/.uv_cache" >> $install_dir/.bashrc
+    echo 'export PATH=$path_with_nodejs' >> $install_dir/.bashrc
+
+# install with uv
+    ynh_hide_warnings uv sync --frozen --no-group dev --group docker --python $python_version --project "$install_dir" 
+
+pushd "$install_dir"/
     ynh_script_progression "Configuring $app..."
     ynh_hide_warnings corepack enable
     ynh_hide_warnings npm install -g corepack@latest
@@ -63,11 +73,11 @@ pushd "$install_dir"/
 
     source $install_dir/.env
 
-    ynh_hide_warnings "$install_dir/venv/bin/wger" bootstrap
-    ynh_hide_warnings "$install_dir/venv/bin/python" manage.py collectstatic --noinput --verbosity 2
-    ynh_hide_warnings "$install_dir/venv/bin/python" manage.py migrate
+    ynh_hide_warnings "$install_dir/.venv/bin/wger" bootstrap
+    ynh_hide_warnings "$install_dir/.venv/bin/python" manage.py collectstatic --noinput --verbosity 2
+    ynh_hide_warnings "$install_dir/.venv/bin/python" manage.py migrate
 
-    echo "from django.contrib.sites.models import Site; site = Site.objects.get(pk=1); site.domain = '$domain'; site.name = '$domain wger Workout Manager'; site.save()" | ynh_hide_warnings "$install_dir/venv/bin/python" "$install_dir/manage.py" shell
+    echo "from django.contrib.sites.models import Site; site = Site.objects.get(pk=1); site.domain = '$domain'; site.name = '$domain wger Workout Manager'; site.save()" | ynh_hide_warnings "$install_dir/.venv/bin/python" "$install_dir/manage.py" shell
 	echo "yes"
  
     set +a
