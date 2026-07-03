@@ -71,7 +71,7 @@ pushd "$install_dir"/
     ynh_hide_warnings corepack enable
     ynh_hide_warnings npm install -g corepack@latest
     ynh_hide_warnings ynh_exec_as_app corepack prepare yarn@4 --activate
-    ynh_hide_warnings ynh_exec_as_app CYPRESS_INSTALL_BINARY=0 NODE_OPTIONS="--max-old-space-size=3000" npm install sass
+   # ynh_hide_warnings ynh_exec_as_app CYPRESS_INSTALL_BINARY=0 NODE_OPTIONS="--max-old-space-size=3000" npm install sass
 
 
     set -a
@@ -94,8 +94,13 @@ pushd "$install_dir"/
     set +a
 
     ynh_safe_rm "$install_dir/.cache/pip"
+popd
+
 
 # powersync install
+
+pushd "$install_dir/powersync"
+
 ## create powersync database
     
 sudo -u postgres psql <<EOF
