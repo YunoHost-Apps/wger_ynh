@@ -64,7 +64,7 @@ ynh_script_progression "Preparing UV..."
 # install with uv
     ynh_hide_warnings uv sync --frozen --no-group dev --group docker --python $python_version --project "$install_dir" 
 
-pushd "$install_dir"/
+pushd "$install_dir"
     ynh_script_progression "Configuring $app..."
     ynh_hide_warnings corepack enable
     ynh_hide_warnings npm install -g corepack@latest
