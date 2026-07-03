@@ -71,6 +71,14 @@ pushd "$install_dir"/
     ynh_hide_warnings ynh_exec_as_app corepack prepare yarn@4 --activate
    # ynh_hide_warnings ynh_exec_as_app CYPRESS_INSTALL_BINARY=0 NODE_OPTIONS="--max-old-space-size=3000" npm install sass
 
+sudo -u postgres psql <<EOF
+CREATE DATABASE powersync;
+GRANT ALL PRIVILEGES ON DATABASE powersync TO $db_user;
+EOF
+
+    ynh_psql_db_shell <<< "ALTER ROLE $db_user WITH SUPERUSER;"
+    ynh_hide_warnings "$install_dir/.venv/bin/python" manage.py migrate
+    ynh_psql_db_shell <<< "ALTER ROLE $db_user WITH NOSUPERUSER;"
 
     set -a
 
@@ -82,14 +90,7 @@ pushd "$install_dir"/
 # workaround to upgrade to 2.6 cause 
 # CREATE PUBLICATION powersync FOR ALL TABLES must be superuser
 
-sudo -u postgres psql <<EOF
-CREATE DATABASE powersync;
-GRANT ALL PRIVILEGES ON DATABASE powersync TO $db_user;
-EOF
 
-    ynh_psql_db_shell <<< "ALTER ROLE $db_user WITH SUPERUSER;"
-    ynh_hide_warnings "$install_dir/.venv/bin/python" manage.py migrate
-    ynh_psql_db_shell <<< "ALTER ROLE $db_user WITH NOSUPERUSER;"
 
     echo "from django.contrib.sites.models import Site; site = Site.objects.get(pk=1); site.domain = '$domain'; site.name = '$domain wger Workout Manager'; site.save()" | ynh_hide_warnings "$install_dir/.venv/bin/python" "$install_dir/manage.py" shell
 	echo "yes"
