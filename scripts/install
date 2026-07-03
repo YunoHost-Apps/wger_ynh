@@ -25,8 +25,11 @@ ynh_app_setting_set --key=redis_db --value=$redis_db
 ynh_script_progression "Setting up source files..."
 
 ynh_setup_source --dest_dir="$install_dir"
-ynh_setup_source --dest_dir="$install_dir/.uv" --source_id="uv"
+ynh_setup_source --dest_dir="$install_dir/.uv" 
 chmod +x "$install_dir/.uv/uv"
+
+ynh_setup_source --dest_dir="$install_dir" --source_id="powersync"
+
 chown -R "$app:www-data" "$install_dir"
 
 #=================================================
@@ -89,6 +92,17 @@ pushd "$install_dir"/
     set +a
 
     ynh_safe_rm "$install_dir/.cache/pip"
+
+# powersync install
+
+ynh_config_add --template="powersync.yaml" --destination="$install_dir/powersync/powersync.yaml"
+ynh_config_add --template="sync_rules.yaml" --destination="$install_dir/powersync/sync_rules.yaml"
+
+
+    ynh_hide_warnings corepack prepare pnpm@latest --activate
+    ynh_hide_warnings pnpm install --frozen-lockfile
+    ynh_hide_warnings pnpm build:production
+    ynh_hide_warnings pnpm install --prod --ignore-scripts
 popd
 
 chown -R "$app:www-data" "$install_dir"
