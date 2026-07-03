@@ -102,6 +102,7 @@ ynh_config_add --template="sync_rules.yaml" --destination="$install_dir/powersyn
     ynh_hide_warnings corepack prepare pnpm@latest --activate
     ynh_hide_warnings pnpm install --frozen-lockfile
     ynh_hide_warnings pnpm build:production
+# rm -rf node_modules **/node_modules
     ynh_hide_warnings pnpm install --prod --ignore-scripts
 popd
 
