@@ -84,9 +84,15 @@ pushd "$install_dir"/
 # workaround to upgrade to 2.6 cause 
 # CREATE PUBLICATION powersync FOR ALL TABLES must be superuser
 
-    ynh_psql_db_shell <<< "ALTER ROLE $db_user WITH SUPERUSER;"
+sudo -u postgres psql <<EOF
+CREATE DATABASE powersync;
+CREATE USER powersync WITH PASSWORD '$powersync_password';
+GRANT ALL PRIVILEGES ON DATABASE powersync TO powersync;
+EOF
+
+    ynh_psql_db_shell <<< "ALTER ROLE powersync WITH SUPERUSER;"
     ynh_hide_warnings "$install_dir/.venv/bin/python" manage.py migrate
-    ynh_psql_db_shell <<< "ALTER ROLE $db_user WITH NOSUPERUSER;"
+    ynh_psql_db_shell <<< "ALTER ROLE powersync WITH NOSUPERUSER;"
 
     echo "from django.contrib.sites.models import Site; site = Site.objects.get(pk=1); site.domain = '$domain'; site.name = '$domain wger Workout Manager'; site.save()" | ynh_hide_warnings "$install_dir/.venv/bin/python" "$install_dir/manage.py" shell
 	echo "yes"
@@ -103,11 +109,7 @@ pushd "$install_dir/powersync"
 
 ## create powersync database
     
-sudo -u postgres psql <<EOF
-CREATE DATABASE powersync;
-CREATE USER powersync WITH PASSWORD '$powersync_password';
-GRANT ALL PRIVILEGES ON DATABASE powersync TO powersync;
-EOF
+
 
 ynh_config_add --template="powersync.yaml" --destination="$install_dir/powersync/powersync.yaml"
 ynh_config_add --template="sync_rules.yaml" --destination="$install_dir/powersync/sync_rules.yaml"
