@@ -13,8 +13,6 @@ source /usr/share/yunohost/helpers
 secret_key=$(ynh_string_random --length=45 | base64)
 signing_key=$(ynh_string_random --length=45 | base64)
 redis_db=$(ynh_redis_get_free_db)
-powersync_password=$(ynh_string_random --length=32)
-
 python_version=3.12
 
 ynh_app_setting_set --key=secret_key --value=$secret_key
@@ -86,13 +84,12 @@ pushd "$install_dir"/
 
 sudo -u postgres psql <<EOF
 CREATE DATABASE powersync;
-CREATE USER powersync WITH PASSWORD '$powersync_password';
-GRANT ALL PRIVILEGES ON DATABASE powersync TO powersync;
+GRANT ALL PRIVILEGES ON DATABASE powersync TO $db_user;
 EOF
 
-    ynh_psql_db_shell <<< "ALTER ROLE powersync WITH SUPERUSER;"
+    ynh_psql_db_shell <<< "ALTER ROLE $db_user WITH SUPERUSER;"
     ynh_hide_warnings "$install_dir/.venv/bin/python" manage.py migrate
-    ynh_psql_db_shell <<< "ALTER ROLE powersync WITH NOSUPERUSER;"
+    ynh_psql_db_shell <<< "ALTER ROLE $db_user WITH NOSUPERUSER;"
 
     echo "from django.contrib.sites.models import Site; site = Site.objects.get(pk=1); site.domain = '$domain'; site.name = '$domain wger Workout Manager'; site.save()" | ynh_hide_warnings "$install_dir/.venv/bin/python" "$install_dir/manage.py" shell
 	echo "yes"
