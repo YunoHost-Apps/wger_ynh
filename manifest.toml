@@ -68,6 +68,12 @@ ram.runtime = "500M"
     autoupdate.asset.arm64 = "^uv-aarch64-unknown-linux-gnu.tar.gz$"
     autoupdate.asset.armhf = "^uv-armv7-unknown-linux-gnueabihf.tar.gz$"
 
+    [resources.sources.powersync]
+    url = "https://github.com/powersync-ja/powersync-service/archive/refs/tags/v1.23.0.tar.gz"
+    sha256 = "ffdba235a2a2bd682d476ee91d918dcc1c3cc7626e247282abe81a7a806d8249"
+
+    autoupdate.strategy = "latest_github_release"
+
     [resources.system_user]
     allow_email = true
 
