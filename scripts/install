@@ -20,6 +20,19 @@ ynh_app_setting_set --key=signing_key --value=$signing_key
 ynh_app_setting_set --key=redis_db --value=$redis_db
 
 #=================================================
+# CREATE AN ADDITIONAL DATABASE FOR POWERSYNC
+#=================================================
+
+powersync_db_user=${app}_powersync
+powersync_db_name=$powersync_db_user
+powersync_db_pwd=$(ynh_string_random)
+ynh_psql_create_user "$powersync_db_user" "$powersync_db_pwd"
+ynh_psql_create_db "$powersync_db_name" "$powersync_db_user"
+ynh_app_setting_set --key=powersync_db_user --value=$powersync_db_user
+ynh_app_setting_set --key=powersync_db_name --value=$powersync_db_name
+ynh_app_setting_set --key=powersync_db_pwd --value=$powersync_db_pwd
+
+#=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 ynh_script_progression "Setting up source files..."
@@ -79,14 +92,11 @@ pushd "$install_dir"
 
     source $install_dir/.env
 
-sudo -u postgres psql <<EOF
-CREATE DATABASE powersync;
-GRANT ALL PRIVILEGES ON DATABASE powersync TO $db_user;
-EOF
-
     ynh_psql_db_shell <<< "ALTER ROLE $db_user WITH SUPERUSER;"
+    ynh_psql_db_shell <<< "ALTER ROLE $powersync_db_user WITH SUPERUSER;"
     ynh_hide_warnings "$install_dir/.venv/bin/python" manage.py migrate
     ynh_psql_db_shell <<< "ALTER ROLE $db_user WITH NOSUPERUSER;"
+    ynh_psql_db_shell <<< "ALTER ROLE $powersync_db_user WITH NOSUPERUSER;"
 
     ynh_hide_warnings "$install_dir/.venv/bin/wger" bootstrap
     ynh_hide_warnings "$install_dir/.venv/bin/python" manage.py collectstatic --noinput --verbosity 2
