@@ -92,6 +92,9 @@ pushd "$install_dir"
 
     source $install_dir/.env
 
+# workaround to upgrade to 2.6 cause 
+# CREATE PUBLICATION powersync FOR ALL TABLES must be superuser
+
     ynh_psql_db_shell <<< "ALTER ROLE $db_user WITH SUPERUSER;"
     ynh_psql_db_shell <<< "ALTER ROLE $powersync_db_user WITH SUPERUSER;"
     ynh_hide_warnings "$install_dir/.venv/bin/python" manage.py migrate
@@ -100,11 +103,7 @@ pushd "$install_dir"
 
     ynh_hide_warnings "$install_dir/.venv/bin/wger" bootstrap
     ynh_hide_warnings "$install_dir/.venv/bin/python" manage.py collectstatic --noinput --verbosity 2
-
-# workaround to upgrade to 2.6 cause 
-# CREATE PUBLICATION powersync FOR ALL TABLES must be superuser
-
-
+    ynh_hide_warnings "$install_dir/.venv/bin/python" manage.py generate-jwt-keys >> $install_dir/.env
 
     echo "from django.contrib.sites.models import Site; site = Site.objects.get(pk=1); site.domain = '$domain'; site.name = '$domain wger Workout Manager'; site.save()" | ynh_hide_warnings "$install_dir/.venv/bin/python" "$install_dir/manage.py" shell
 	echo "yes"
