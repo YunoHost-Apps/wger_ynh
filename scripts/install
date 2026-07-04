@@ -13,10 +13,24 @@ source /usr/share/yunohost/helpers
 secret_key=$(ynh_string_random --length=45 | base64)
 signing_key=$(ynh_string_random --length=45 | base64)
 redis_db=$(ynh_redis_get_free_db)
+python_version=3.12
 
 ynh_app_setting_set --key=secret_key --value=$secret_key
 ynh_app_setting_set --key=signing_key --value=$signing_key
 ynh_app_setting_set --key=redis_db --value=$redis_db
+
+#=================================================
+# CREATE AN ADDITIONAL DATABASE FOR POWERSYNC
+#=================================================
+
+powersync_db_user=${app}_powersync
+powersync_db_name=$powersync_db_user
+powersync_db_pwd=$(ynh_string_random)
+ynh_psql_create_user "$powersync_db_user" "$powersync_db_pwd"
+ynh_psql_create_db "$powersync_db_name" "$powersync_db_user"
+ynh_app_setting_set --key=powersync_db_user --value=$powersync_db_user
+ynh_app_setting_set --key=powersync_db_name --value=$powersync_db_name
+ynh_app_setting_set --key=powersync_db_pwd --value=$powersync_db_pwd
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -24,6 +38,10 @@ ynh_app_setting_set --key=redis_db --value=$redis_db
 ynh_script_progression "Setting up source files..."
 
 ynh_setup_source --dest_dir="$install_dir"
+ynh_setup_source --dest_dir="$install_dir/.uv" --source_id="uv"
+chmod +x "$install_dir/.uv/uv"
+
+ynh_setup_source --dest_dir="$install_dir/powersync" --source_id="powersync"
 
 chown -R "$app:www-data" "$install_dir"
 
@@ -33,6 +51,11 @@ chown -R "$app:www-data" "$install_dir"
 ynh_script_progression "Adding $app's configuration files..."
 
 ynh_config_add --template=".env" --destination="$install_dir/.env"
+
+
+ynh_config_add --template="powersync.yaml" --destination="$install_dir/powersync/powersync.yaml"
+ynh_config_add --template="sync_rules.yaml" --destination="$install_dir/powersync/sync_rules.yaml"
+
 chown -R "$app":www-data "$install_dir"/
 
 #=================================================
@@ -46,33 +69,68 @@ mkdir -p "$install_dir/static"
 chown -R "$app:$app" "$data_dir/media"
 chown -R "$app:$app" "$install_dir/static"
 
-pushd "$install_dir"/
-    ynh_script_progression "Creating venv..."
-    ynh_exec_as_app python3 -m venv "$install_dir/venv"
-    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/pip" install --upgrade pip gunicorn
-    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/pip" install .
 
+ynh_script_progression "Preparing UV..."
+    export PATH="$install_dir/.uv:$PATH"
+    export UV_PYTHON_INSTALL_DIR="$install_dir/.python_runtime"
+    export UV_CACHE_DIR="$install_dir/.uv_cache"
+    echo "PATH=$install_dir/.uv:\$PATH" >> $install_dir/.bashrc 
+    echo "UV_PYTHON_INSTALL_DIR=$install_dir/.python_runtime" >> $install_dir/.bashrc 
+    echo "UV_CACHE_DIR=$install_dir/.uv_cache" >> $install_dir/.bashrc
+    echo 'export PATH=$path_with_nodejs' >> $install_dir/.bashrc
+
+# install with uv
+    ynh_hide_warnings uv sync --frozen --no-group dev --group docker --python $python_version --project "$install_dir" 
+
+pushd "$install_dir"
     ynh_script_progression "Configuring $app..."
     ynh_hide_warnings corepack enable
     ynh_hide_warnings npm install -g corepack@latest
     ynh_hide_warnings ynh_exec_as_app corepack prepare yarn@4 --activate
     ynh_hide_warnings ynh_exec_as_app CYPRESS_INSTALL_BINARY=0 NODE_OPTIONS="--max-old-space-size=3000" npm install sass
-
-
     set -a
 
     source $install_dir/.env
+    ynh_hide_warnings "$install_dir/.venv/bin/python" manage.py generate-jwt-keys >> $install_dir/.env
 
-    ynh_hide_warnings "$install_dir/venv/bin/wger" bootstrap
-    ynh_hide_warnings "$install_dir/venv/bin/python" manage.py collectstatic --noinput --verbosity 2
-    ynh_hide_warnings "$install_dir/venv/bin/python" manage.py migrate
+# workaround to upgrade to 2.6 cause 
+# CREATE PUBLICATION powersync FOR ALL TABLES must be superuser
 
-    echo "from django.contrib.sites.models import Site; site = Site.objects.get(pk=1); site.domain = '$domain'; site.name = '$domain wger Workout Manager'; site.save()" | ynh_hide_warnings "$install_dir/venv/bin/python" "$install_dir/manage.py" shell
+    ynh_psql_db_shell <<< "ALTER ROLE $db_user WITH SUPERUSER;"
+    ynh_psql_db_shell <<< "ALTER ROLE $db_user WITH REPLICATION;"
+    ynh_psql_db_shell <<< "ALTER ROLE $powersync_db_user WITH SUPERUSER;"
+    ynh_hide_warnings "$install_dir/.venv/bin/python" manage.py migrate
+    ynh_psql_db_shell <<< "ALTER ROLE $db_user WITH NOSUPERUSER;"
+    ynh_psql_db_shell <<< "ALTER ROLE $powersync_db_user WITH NOSUPERUSER;"
+
+    ynh_hide_warnings "$install_dir/.venv/bin/wger" bootstrap
+    ynh_hide_warnings "$install_dir/.venv/bin/python" manage.py collectstatic --noinput --verbosity 2
+ #   ynh_hide_warnings "$install_dir/.venv/bin/python" manage.py generate-jwt-keys >> $install_dir/.env
+
+    echo "from django.contrib.sites.models import Site; site = Site.objects.get(pk=1); site.domain = '$domain'; site.name = '$domain wger Workout Manager'; site.save()" | ynh_hide_warnings "$install_dir/.venv/bin/python" "$install_dir/manage.py" shell
 	echo "yes"
  
     set +a
 
     ynh_safe_rm "$install_dir/.cache/pip"
+popd
+
+
+# powersync install
+
+pushd "$install_dir/powersync"
+
+## create powersync database
+    
+
+
+
+
+    ynh_hide_warnings corepack prepare pnpm@latest --activate
+    ynh_hide_warnings pnpm install --frozen-lockfile
+    ynh_hide_warnings pnpm build:production
+# rm -rf node_modules **/node_modules
+    ynh_hide_warnings env CI=true pnpm install --prod --ignore-scripts
 popd
 
 chown -R "$app:www-data" "$install_dir"
@@ -89,9 +147,11 @@ ynh_script_progression "Adding system configurations related to $app..."
 ynh_config_add_nginx
 
 # Create a dedicated systemd config
-ynh_config_add_systemd
+ynh_config_add_systemd --service="$app" --template="systemd.service"
+ynh_config_add_systemd --service="$app-powersync" --template="powersync.service"
 
 yunohost service add "$app" --description="$app service" --log="/var/log/$app/$app.log"
+yunohost service add "$app-powersync" --description="$app powersync" --log="/var/log/$app/$app-powersync.log"
 
 # Use logrotate to manage application logfile(s)
 ynh_config_add_logrotate
@@ -105,6 +165,7 @@ ynh_config_add_logrotate
 ynh_script_progression "Starting $app's systemd service..."
 
 # Start a systemd service
+ynh_systemctl --service="$app-powersync" --action="start"
 ynh_systemctl --service="$app" --action="start"
 
 #=================================================

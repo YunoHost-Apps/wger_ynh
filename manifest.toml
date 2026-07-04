@@ -52,6 +52,28 @@ ram.runtime = "500M"
 
     autoupdate.strategy = "latest_github_release"
 
+    [resources.sources.uv]
+    amd64.url = "https://github.com/astral-sh/uv/releases/download/0.11.23/uv-x86_64-unknown-linux-gnu.tar.gz"
+    amd64.sha256 = "e12c4cda2fe8c305510a78380a88f2c32a27e90cdcd123cefd2873388f0ebb5f"
+    arm64.url = "https://github.com/astral-sh/uv/releases/download/0.11.23/uv-aarch64-unknown-linux-gnu.tar.gz"
+    arm64.sha256 = "1873a77350f6621279ae1a0d2227f2bd8b67131598f14a7eb0ba2215d3da2c98"
+    armhf.url = "https://github.com/astral-sh/uv/releases/download/0.11.23/uv-armv7-unknown-linux-gnueabihf.tar.gz"
+    armhf.sha256 = "d10df2ebaa729a51d15395720c3f5e76497ae6414beb82043bb2e53f9a86314a"
+
+    in_subdir = true
+    
+    autoupdate.strategy = "latest_github_release"
+    autoupdate.upstream = "https://github.com/astral-sh/uv"
+    autoupdate.asset.amd64 = "^uv-x86_64-unknown-linux-gnu.tar.gz$"
+    autoupdate.asset.arm64 = "^uv-aarch64-unknown-linux-gnu.tar.gz$"
+    autoupdate.asset.armhf = "^uv-armv7-unknown-linux-gnueabihf.tar.gz$"
+
+    [resources.sources.powersync]
+    url = "https://github.com/powersync-ja/powersync-service/archive/refs/tags/v1.23.0.tar.gz"
+    sha256 = "ffdba235a2a2bd682d476ee91d918dcc1c3cc7626e247282abe81a7a806d8249"
+
+    autoupdate.strategy = "latest_github_release"
+
     [resources.system_user]
     allow_email = true
 
@@ -64,6 +86,7 @@ ram.runtime = "500M"
 
     [resources.ports]
     main.default = 8000
+    ps.default = 8080
 
     [resources.apt]
     packages = "postgresql, postgresql-contrib, python3, python3-venv, ffmpeg, redis-server"
@@ -72,5 +95,5 @@ ram.runtime = "500M"
     type = "postgresql"
 
     [resources.nodejs]
-    version = "22"
+    version = "24"
 
