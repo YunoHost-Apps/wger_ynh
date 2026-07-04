@@ -97,6 +97,7 @@ pushd "$install_dir"
 # CREATE PUBLICATION powersync FOR ALL TABLES must be superuser
 
     ynh_psql_db_shell <<< "ALTER ROLE $db_user WITH SUPERUSER;"
+    ynh_psql_db_shell <<< "ALTER ROLE $db_user WITH REPLICATION;"
     ynh_psql_db_shell <<< "ALTER ROLE $powersync_db_user WITH SUPERUSER;"
     ynh_hide_warnings "$install_dir/.venv/bin/python" manage.py migrate
     ynh_psql_db_shell <<< "ALTER ROLE $db_user WITH NOSUPERUSER;"
