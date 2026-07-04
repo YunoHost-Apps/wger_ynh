@@ -129,7 +129,7 @@ pushd "$install_dir/powersync"
     ynh_hide_warnings pnpm install --frozen-lockfile
     ynh_hide_warnings pnpm build:production
 # rm -rf node_modules **/node_modules
-    ynh_hide_warnings pnpm install --prod --ignore-scripts
+    ynh_hide_warnings env CI=true pnpm install --prod --ignore-scripts
 popd
 
 chown -R "$app:www-data" "$install_dir"
@@ -146,8 +146,8 @@ ynh_script_progression "Adding system configurations related to $app..."
 ynh_config_add_nginx
 
 # Create a dedicated systemd config
-ynh_config_add_systemd -service="$app" --template="systemd.service"
-ynh_config_add_systemd -service="$app-powersync" --template="powersync.service"
+ynh_config_add_systemd --service="$app" --template="systemd.service"
+ynh_config_add_systemd --service="$app-powersync" --template="powersync.service"
 
 yunohost service add "$app" --description="$app service" --log="/var/log/$app/$app.log"
 yunohost service add "$app-powersync" --description="$app powersync" --log="/var/log/$app/$app-powersync.log"
