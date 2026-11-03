@@ -13,11 +13,11 @@ source /usr/share/yunohost/helpers
 secret_key=$(ynh_string_random --length=45 | base64)
 jwt_private_key=$(ynh_string_random --length=45 | base64)
 jwt_public_key=$(ynh_string_random --length=45 | base64)
-
 redis_db=$(ynh_redis_get_free_db)
 
 ynh_app_setting_set --key=secret_key --value=$secret_key
-ynh_app_setting_set --key=signing_key --value=$signing_key
+ynh_app_setting_set --key=jwt_private_key --value=$jwt_private_key
+ynh_app_setting_set --key=jwt_public_key --value=$jwt_public_key
 ynh_app_setting_set --key=redis_db --value=$redis_db
 
 #=================================================
