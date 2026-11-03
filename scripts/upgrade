@@ -18,8 +18,8 @@ ynh_app_setting_set_default --key=private_key --value=$(ynh_string_random --leng
 ynh_app_setting_set_default --key=public_key --value=$(ynh_string_random --length=45 | base64)
 
 
-# Remove this key because it has been renamed for v2.4
 ynh_app_setting_delete --key=key
+ynh_app_setting_delete --key=signing_key
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
