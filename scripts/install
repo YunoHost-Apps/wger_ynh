@@ -48,16 +48,16 @@ chown -R "$app:$app" "$install_dir/static"
 
 pushd "$install_dir"/
     ynh_script_progression "Creating venv..."
-    ynh_exec_as_app python3 -m venv "$install_dir/venv"
-    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/pip" install --upgrade pip gunicorn
-    ynh_hide_warnings ynh_exec_as_app "$install_dir/venv/bin/pip" install .
+    ynh_exec_as_app python3 -m venv "$install_dir/.venv"
+    ynh_hide_warnings ynh_exec_as_app "$install_dir/.venv/bin/pip" install --upgrade pip gunicorn uv
+    ynh_hide_warnings ynh_exec_as_app "$install_dir/.venv/bin/uv" venv --python 3.13 --seed --clear
+    ynh_hide_warnings ynh_exec_as_app "$install_dir/.venv/bin/pip" install .
 
     ynh_script_progression "Configuring $app..."
     ynh_hide_warnings corepack enable
     ynh_hide_warnings npm install -g corepack@latest
     ynh_hide_warnings ynh_exec_as_app corepack prepare yarn@4 --activate
     ynh_hide_warnings ynh_exec_as_app CYPRESS_INSTALL_BINARY=0 NODE_OPTIONS="--max-old-space-size=3000" npm install sass
-
 
     set -a
 
