@@ -58,8 +58,9 @@ ynh_safe_rm "$install_dir/venv"
 fi
 
     ynh_exec_as_app python3 -m venv "$install_dir/.venv"
-    ynh_hide_warnings ynh_exec_as_app "$install_dir/.venv/bin/pip" install --upgrade pip gunicorn uv
+    ynh_hide_warnings ynh_exec_as_app "$install_dir/.venv/bin/pip" install --upgrade uv
     ynh_hide_warnings ynh_exec_as_app "$install_dir/.venv/bin/uv" venv --python 3.13 --seed --clear
+    ynh_hide_warnings ynh_exec_as_app "$install_dir/.venv/bin/pip" install --upgrade pip gunicorn
     ynh_hide_warnings ynh_exec_as_app "$install_dir/.venv/bin/pip" install .
 
     ynh_script_progression "Configuring $app..."
